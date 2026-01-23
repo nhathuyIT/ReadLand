@@ -20,7 +20,6 @@ export const router = createBrowserRouter([
       },
       {
         path: "/account",
-        element: <MyProfile />,
         children: [
           {
             index: true,

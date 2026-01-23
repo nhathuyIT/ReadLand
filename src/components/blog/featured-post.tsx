@@ -12,7 +12,7 @@ export function FeaturedPost({ post }: FeaturedPostProps) {
     <Card className="group overflow-hidden cursor-pointer hover:shadow-2xl transition-all duration-300 border-2">
       <div className="grid lg:grid-cols-2 gap-0">
         {post.imageUrl && (
-          <div className="relative overflow-hidden h-96 lg:h-full">
+          <div className="relative overflow-hidden h-64 lg:h-80">
             <img
               src={post.imageUrl}
               alt={post.title}
