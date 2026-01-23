@@ -1,14 +1,11 @@
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  MyPostCard,
-  PostFormDialog,
-  PostStatusTabs,
-} from "@/components/blog";
 import { useMyPosts } from "@/hooks/use-my-posts";
 import { useAuth } from "@/context/auth-context";
 import type { Post, PostStatus, CreatePostInput } from "@/types/post.type";
 import { PlusCircle, Loader2, FileText } from "lucide-react";
+import { PostStatusTabs } from "./components/post-status-tabs";
+import { MyPostCard, PostFormDialog } from "@/components/blog";
 
 const MyPost = () => {
   const { user } = useAuth();
@@ -33,7 +30,12 @@ const MyPost = () => {
       REJECTED: 0,
     };
 
-    const validStatuses: PostStatus[] = ["DRAFT", "PENDING", "APPROVED", "REJECTED"];
+    const validStatuses: PostStatus[] = [
+      "DRAFT",
+      "PENDING",
+      "APPROVED",
+      "REJECTED",
+    ];
 
     posts.forEach((post) => {
       // Only count if status is valid
@@ -167,7 +169,6 @@ const MyPost = () => {
         )}
       </div>
 
-      {/* Create/Edit Dialog */}
       <PostFormDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}

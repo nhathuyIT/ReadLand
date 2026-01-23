@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Sparkles } from "lucide-react";
+import { useAuth } from "@/context/auth-context";
 
 export function HeroSection() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   return (
     <section className="relative overflow-hidden border-b bg-linear-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-slate-900">
       {/* Background grid - behind content */}
@@ -34,13 +36,23 @@ export function HeroSection() {
                 WANT TO POST YOUR OWN BLOG?
               </p>
               <div className="relative flex-1">
-                <Button
-                  onClick={() => navigate("/login")}
-                  type="button"
-                  className="bg-orange-600 hover:bg-orange-700 cursor-pointer px-5 py-2 text-md h-auto"
-                >
-                  Login
-                </Button>
+                {!user ? (
+                  <Button
+                    onClick={() => navigate("/login")}
+                    type="button"
+                    className="bg-orange-600 hover:bg-orange-700 cursor-pointer px-5 py-2 text-md h-auto"
+                  >
+                    Login
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => navigate("/account/my-posts")}
+                    type="button"
+                    className="bg-orange-600 hover:bg-orange-700 cursor-pointer px-5 py-2 text-md h-auto"
+                  >
+                    Posts
+                  </Button>
+                )}
               </div>
               <p className="text-xs text-muted-foreground">
                 Join 50,000+ subscribers. Unsubscribe anytime.
