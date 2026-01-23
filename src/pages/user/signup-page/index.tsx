@@ -32,9 +32,9 @@ const SignupPage = () => {
       await signup(data);
       await login(data.username, data.password);
       // login will redirect
-    } catch (err: any) {
-      setError(err?.message || "Signup failed");
-    } finally {
+    } catch (err: unknown) {
+       if (err instanceof Error) setError(err.message);
+    }finally {
       setIsLoading(false);
     }
   };
