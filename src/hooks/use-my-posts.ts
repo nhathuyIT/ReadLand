@@ -1,5 +1,6 @@
 import { useEffect, useReducer, useCallback } from "react";
 import { useAuth } from "@/context/auth-context";
+import { useTimestamp } from "./use-create-update-at";
 import type { Post, CreatePostInput } from "@/types/post.type";
 import {
   getPostsByUserId,
@@ -18,10 +19,7 @@ interface MyPostsState {
 type MyPostsAction =
   | { type: "FETCH_START" }
   | { type: "FETCH_SUCCESS"; payload: Post[] }
-  | { type: "FETCH_ERROR"; payload: string }
-  | { type: "ADD_POST"; payload: Post }
-  | { type: "UPDATE_POST"; payload: Post }
-  | { type: "DELETE_POST"; payload: string };
+  | { type: "FETCH_ERROR"; payload: string };
 
 const initialState: MyPostsState = {
   posts: [],
@@ -40,20 +38,6 @@ function myPostsReducer(
       return { ...state, loading: false, posts: action.payload };
     case "FETCH_ERROR":
       return { ...state, loading: false, error: action.payload };
-    case "ADD_POST":
-      return { ...state, posts: [action.payload, ...state.posts] };
-    case "UPDATE_POST":
-      return {
-        ...state,
-        posts: state.posts.map((post) =>
-          post.id === action.payload.id ? action.payload : post,
-        ),
-      };
-    case "DELETE_POST":
-      return {
-        ...state,
-        posts: state.posts.filter((post) => post.id !== action.payload),
-      };
     default:
       return state;
   }
@@ -61,6 +45,7 @@ function myPostsReducer(
 
 export function useMyPosts() {
   const { user } = useAuth();
+  const { getCurrentTimestamp } = useTimestamp();
   const [state, dispatch] = useReducer(myPostsReducer, initialState);
 
   const fetchPosts = useCallback(async () => {
@@ -91,8 +76,16 @@ export function useMyPosts() {
       }
 
       try {
-        const newPost = await apiCreatePost({ ...postData, userId: user.id });
-        dispatch({ type: "ADD_POST", payload: newPost });
+        const timestamp = getCurrentTimestamp();
+        const newPost = await apiCreatePost({
+          ...postData,
+          userId: user.id,
+          createdAt: timestamp,
+          updatedAt: timestamp,
+        });
+        // Refetch after success
+        await fetchPosts();
+
         toast.success("Post created successfully", {
           description:
             postData.status === "DRAFT"
@@ -108,14 +101,19 @@ export function useMyPosts() {
         throw error;
       }
     },
-    [user],
+    [user, fetchPosts, getCurrentTimestamp],
   );
 
   const updatePost = useCallback(
     async (id: string, postData: Partial<CreatePostInput>) => {
       try {
-        const updatedPost = await apiUpdatePost(id, postData);
-        dispatch({ type: "UPDATE_POST", payload: updatedPost });
+        const updatedPost = await apiUpdatePost(id, {
+          ...postData,
+          updatedAt: getCurrentTimestamp(),
+        });
+        // Refetch after success
+        await fetchPosts();
+
         toast.success("Post updated successfully");
         return updatedPost;
       } catch (error) {
@@ -126,22 +124,27 @@ export function useMyPosts() {
         throw error;
       }
     },
-    [],
+    [fetchPosts, getCurrentTimestamp],
   );
 
-  const deletePost = useCallback(async (id: string) => {
-    try {
-      await apiDeletePost(id);
-      dispatch({ type: "DELETE_POST", payload: id });
-      toast.success("Post deleted successfully");
-    } catch (error) {
-      const message = (error as Error).message;
-      toast.error("Failed to delete post", {
-        description: message,
-      });
-      throw error;
-    }
-  }, []);
+  const deletePost = useCallback(
+    async (id: string) => {
+      try {
+        await apiDeletePost(id);
+        // Refetch after success
+        await fetchPosts();
+
+        toast.success("Post deleted successfully");
+      } catch (error) {
+        const message = (error as Error).message;
+        toast.error("Failed to delete post", {
+          description: message,
+        });
+        throw error;
+      }
+    },
+    [fetchPosts],
+  );
 
   return {
     ...state,
