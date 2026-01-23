@@ -3,12 +3,15 @@ import { Badge } from "@/components/ui/badge";
 const categories = [
   "All",
   "Technology",
-  "AI & ML",
-  "Web Development",
-  "Mobile",
-  "Cloud",
-  "DevOps",
-  "Security",
+  "Lifestyle",
+  "Travel",
+  "Food",
+  "Health",
+  "Business",
+  "Education",
+  "Entertainment",
+  "Sports",
+  "Other",
 ];
 
 interface CategoryFilterProps {

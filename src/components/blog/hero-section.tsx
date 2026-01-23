@@ -61,15 +61,12 @@ export function HeroSection() {
           </div>
 
           <div className="lg:col-span-5 relative">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-4">
-                <div className="h-48 rounded-lg bg-linear-to-br from-blue-400 to-blue-600 shadow-lg"></div>
-                <div className="h-32 rounded-lg bg-linear-to-br from-purple-400 to-purple-600 shadow-lg"></div>
-              </div>
-              <div className="space-y-4 pt-8">
-                <div className="h-32 rounded-lg bg-linear-to-br from-orange-400 to-orange-600 shadow-lg"></div>
-                <div className="h-48 rounded-lg bg-linear-to-br from-cyan-400 to-cyan-600 shadow-lg"></div>
-              </div>
+            <div className="flex items-center justify-center">
+              <img 
+                src="/website-poster-nobg.png" 
+                alt="ReadLand Poster" 
+                className="w-full h-auto object-contain"
+              />
             </div>
           </div>
         </div>

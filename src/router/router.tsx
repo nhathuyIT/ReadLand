@@ -1,5 +1,5 @@
 import AppLayout from "@/layouts/app.layout";
-import { HomePage, LoginPage, MyPost, MyProfile, SignupPage } from "@/pages/user";
+import { HomePage, LoginPage, MyPost, MyProfile, SignupPage, PostDetailPage } from "@/pages/user";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
 export const router = createBrowserRouter([
@@ -9,6 +9,10 @@ export const router = createBrowserRouter([
       {
         path: "/",
         element: <HomePage />,
+      },
+      {
+        path: "/post/:id",
+        element: <PostDetailPage />,
       },
       {
         path: "/login",

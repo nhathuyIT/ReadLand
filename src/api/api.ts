@@ -25,3 +25,8 @@ export async function getPosts(): Promise<Post[]> {
   const { data } = await api.get<Post[]>("/post");
   return data;
 }
+
+export async function getPostById(id: string): Promise<Post> {
+  const { data } = await api.get<Post>(`/post/${id}`);
+  return data;
+}
