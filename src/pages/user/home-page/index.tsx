@@ -15,7 +15,11 @@ const HomePage = () => {
   const approvedPosts = posts.filter((p) => p.status === "APPROVED");
   const featuredPost = approvedPosts[0];
   const recentPosts = approvedPosts.slice(1, 4);
-  const morePosts = approvedPosts.slice(4);
+  
+  // Filter posts based on active category
+  const filteredPosts = activeCategory === "All" 
+    ? approvedPosts.slice(4)
+    : approvedPosts.filter((p) => p.topic === activeCategory);
 
   if (loading) {
     return (
@@ -94,7 +98,13 @@ const HomePage = () => {
 
         {/* More Posts */}
         <section>
-          <PostGrid posts={morePosts} columns={3} />
+          {filteredPosts.length > 0 ? (
+            <PostGrid posts={filteredPosts} columns={3} />
+          ) : (
+            <p className="text-center text-muted-foreground py-8">
+              No posts found :(
+            </p>
+          )}
         </section>
       </div>
     </div>
