@@ -17,7 +17,7 @@ export async function getPostsByUserId(userId: string): Promise<Post[]> {
     const { data } = await api.get<Post[]>("/post", {
         params: { userId },
     });
-    return data;
+    return data.filter((post) => String(post.userId) === String(userId));
 }
 
 /**
