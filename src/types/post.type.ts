@@ -12,3 +12,18 @@ export interface Post {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface CreatePostInput {
+  title: string;
+  description: string;
+  topic: string;
+  imageUrl?: string;
+  status: "DRAFT" | "PENDING";
+}
+
+export interface UpdatePostInput extends Partial<CreatePostInput> {
+  id: string;
+}
+
+// Helper type for components that need status type
+export type PostStatus = Post["status"];
