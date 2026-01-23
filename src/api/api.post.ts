@@ -31,8 +31,8 @@ export async function createPost(
         ...post,
         slug: post.title.toLowerCase().replace(/\s+/g, "-"),
         view: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: post.createdAt || new Date().toISOString(),
+        updatedAt: post.updatedAt || new Date().toISOString(),
     });
     return data;
 }
@@ -47,7 +47,7 @@ export async function updatePost(
 ): Promise<Post> {
     const { data } = await api.put<Post>(`/post/${id}`, {
         ...post,
-        updatedAt: new Date().toISOString(),
+        updatedAt: post.updatedAt || new Date().toISOString(),
     });
     return data;
 }

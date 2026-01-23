@@ -19,6 +19,8 @@ export interface CreatePostInput {
   topic: string;
   imageUrl?: string;
   status: "DRAFT" | "PENDING";
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface UpdatePostInput extends Partial<CreatePostInput> {
