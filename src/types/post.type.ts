@@ -8,9 +8,9 @@ export interface Post {
   slug: string;
   view: number;
   topic: string;
-  // paragraph: string;
   createdAt: string;
   updatedAt: string;
+  paragraph: string;
 }
 
 export interface CreatePostInput {
@@ -21,6 +21,7 @@ export interface CreatePostInput {
   status: "DRAFT" | "PENDING";
   createdAt?: string;
   updatedAt?: string;
+  paragraph: string;
 }
 
 export interface UpdatePostInput extends Partial<CreatePostInput> {

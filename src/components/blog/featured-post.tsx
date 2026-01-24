@@ -1,7 +1,7 @@
 import type { Post } from "@/types/post.type";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, TrendingUp } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface FeaturedPostProps {
@@ -16,7 +16,7 @@ export function FeaturedPost({ post }: FeaturedPostProps) {
   };
 
   return (
-    <Card 
+    <Card
       className="group overflow-hidden cursor-pointer hover:shadow-2xl transition-all duration-300 border-2"
       onClick={handleClick}
     >
@@ -29,7 +29,6 @@ export function FeaturedPost({ post }: FeaturedPostProps) {
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <Badge className="absolute top-6 left-6 bg-orange-600 text-white gap-1">
-              <TrendingUp className="h-3 w-3" />
               Featured
             </Badge>
           </div>
