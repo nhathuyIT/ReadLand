@@ -9,6 +9,7 @@ import {
 import type { RoleCode, User } from "@/types/user.type";
 import { login as apiLogin } from "@/api/api";
 import { useNavigate } from "react-router-dom";
+import { signup } from "@/api/signup-api";
 
 interface AuthContextType {
   user: User | null;
@@ -78,7 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       login,
       logout,
     }),
-    [user, isLoading, hasRole, login, logout],
+    [user, isLoading, hasRole, login, logout, signup],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

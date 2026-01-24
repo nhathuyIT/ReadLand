@@ -2,17 +2,27 @@ import type { Post } from "@/types/post.type";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, TrendingUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface FeaturedPostProps {
   post: Post;
 }
 
 export function FeaturedPost({ post }: FeaturedPostProps) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/post/${post.id}`);
+  };
+
   return (
-    <Card className="group overflow-hidden cursor-pointer hover:shadow-2xl transition-all duration-300 border-2">
+    <Card 
+      className="group overflow-hidden cursor-pointer hover:shadow-2xl transition-all duration-300 border-2"
+      onClick={handleClick}
+    >
       <div className="grid lg:grid-cols-2 gap-0">
         {post.imageUrl && (
-          <div className="relative overflow-hidden h-96 lg:h-full">
+          <div className="relative overflow-hidden h-64 lg:h-80">
             <img
               src={post.imageUrl}
               alt={post.title}
