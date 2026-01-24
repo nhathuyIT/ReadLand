@@ -9,16 +9,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, FileText, LogOut } from "lucide-react";
+import { User, FileText, LogOut, Settings } from "lucide-react";
 
 const Header = () => {
   const { user, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 w-full h-22 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <header className="sticky top-0 z-50 w-full h-18 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to={"/"}>
-          <img className="h-20 mt-5" src={"/logo.png"} alt="ReadLand" />
+          <img className="h-15 mt-5" src={"/logo.png"} alt="ReadLand" />
         </Link>
 
         <div className="flex items-center gap-4">
@@ -29,7 +29,7 @@ const Header = () => {
                   variant="ghost"
                   className="relative h-10 w-10 rounded-full"
                 >
-                  <Avatar className="h-10 w-10 cursor-pointer">
+                  <Avatar className="h-12 w-12 cursor-pointer mt-5">
                     <AvatarImage src={user.avatarUrl} alt={user.username} />
                     <AvatarFallback>
                       <User className="h-5 w-5" />
@@ -54,7 +54,7 @@ const Header = () => {
                     to="/account/my-profile"
                     className="flex items-center cursor-pointer"
                   >
-                    <FileText className="mr-2 h-4 w-4" />
+                    <User className="mr-2 h-4 w-4" />
                     <span>My Profile</span>
                   </Link>
                 </DropdownMenuItem>
@@ -63,10 +63,24 @@ const Header = () => {
                     to="/account/my-posts"
                     className="flex items-center cursor-pointer"
                   >
-                    <User className="mr-2 h-4 w-4" />
+                    <FileText className="mr-2 h-4 w-4" />
                     <span>My Posts</span>
                   </Link>
                 </DropdownMenuItem>
+                {user.role === 0 && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link
+                        to="/admin-dashboard"
+                        className="flex items-center cursor-pointer"
+                      >
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Admin Dashboard</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout} className="cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />

@@ -1,5 +1,5 @@
 import type { Post } from "@/types/post.type";
-import { PostCard } from "./post-card";
+import { PostCard } from "../../pages/user/my-post/components/post-card";
 
 interface PostGridProps {
   posts: Post[];

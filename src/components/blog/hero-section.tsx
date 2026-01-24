@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Sparkles } from "lucide-react";
+import { useAuth } from "@/context/auth-context";
 
 export function HeroSection() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   return (
     <section className="relative overflow-hidden border-b bg-linear-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-slate-900">
       {/* Background grid - behind content */}
@@ -34,13 +36,23 @@ export function HeroSection() {
                 WANT TO POST YOUR OWN BLOG?
               </p>
               <div className="relative flex-1">
-                <Button
-                  onClick={() => navigate("/login")}
-                  type="button"
-                  className="bg-orange-600 hover:bg-orange-700 cursor-pointer px-5 py-2 text-md h-auto"
-                >
-                  Login
-                </Button>
+                {!user ? (
+                  <Button
+                    onClick={() => navigate("/login")}
+                    type="button"
+                    className="bg-orange-600 hover:bg-orange-700 cursor-pointer px-5 py-2 text-md h-auto"
+                  >
+                    Login
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => navigate("/account/my-posts")}
+                    type="button"
+                    className="bg-orange-600 hover:bg-orange-700 cursor-pointer px-5 py-2 text-md h-auto"
+                  >
+                    Posts
+                  </Button>
+                )}
               </div>
               <p className="text-xs text-muted-foreground">
                 Join 50,000+ subscribers. Unsubscribe anytime.
@@ -49,15 +61,12 @@ export function HeroSection() {
           </div>
 
           <div className="lg:col-span-5 relative">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-4">
-                <div className="h-48 rounded-lg bg-linear-to-br from-blue-400 to-blue-600 shadow-lg"></div>
-                <div className="h-32 rounded-lg bg-linear-to-br from-purple-400 to-purple-600 shadow-lg"></div>
-              </div>
-              <div className="space-y-4 pt-8">
-                <div className="h-32 rounded-lg bg-linear-to-br from-orange-400 to-orange-600 shadow-lg"></div>
-                <div className="h-48 rounded-lg bg-linear-to-br from-cyan-400 to-cyan-600 shadow-lg"></div>
-              </div>
+            <div className="flex items-center justify-center">
+              <img 
+                src="/website-poster-nobg.png" 
+                alt="ReadLand Poster" 
+                className="w-full h-auto object-contain"
+              />
             </div>
           </div>
         </div>

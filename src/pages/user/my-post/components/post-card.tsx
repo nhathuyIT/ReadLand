@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, User } from "lucide-react";
 import type { Post } from "@/types/post.type";
+import { useNavigate } from "react-router-dom";
 
 interface PostCardProps {
   post: Post;
@@ -10,10 +11,18 @@ interface PostCardProps {
 }
 
 export function PostCard({ post, variant = "default" }: PostCardProps) {
+  const navigate = useNavigate();
   const isFeatured = variant === "featured";
 
+  const handleClick = () => {
+    navigate(`/post/${post.id}`);
+  };
+
   return (
-    <Card className="group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300">
+    <Card 
+      className="group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300"
+      onClick={handleClick}
+    >
       {post.imageUrl && (
         <div
           className={`relative overflow-hidden ${isFeatured ? "h-80" : "h-48"}`}
