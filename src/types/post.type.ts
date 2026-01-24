@@ -22,7 +22,6 @@ export interface CreatePostInput {
   status: "DRAFT" | "PENDING";
   createdAt?: string;
   updatedAt?: string;
-  paragraph: string;
 }
 
 export interface UpdatePostInput extends Partial<CreatePostInput> {

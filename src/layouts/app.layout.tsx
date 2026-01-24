@@ -14,7 +14,6 @@ const AppLayout = () => {
   useEffect(() => {
     generateToken();
     onMessage(messaging, (payload) => {
-      console.log(payload);
       toast(payload.notification?.body);
     });
   }, []);
