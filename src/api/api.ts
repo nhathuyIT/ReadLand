@@ -26,6 +26,11 @@ export async function getPosts(): Promise<Post[]> {
   return data;
 }
 
+export async function getPostById(postId: string): Promise<Post> {
+  const { data } = await api.get<Post>(`/post/${postId}`);
+  return data;
+}
+
 export async function updatePostStatus(
   postId: string,
   status: Post["status"],
