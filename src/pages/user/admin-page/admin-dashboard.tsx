@@ -76,14 +76,34 @@ const AdminDashboard = () => {
     }
   };
 
-  const filteredPosts = posts.filter((post) => {
-    const matchesSearch =
-      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statusFilter === "ALL" || post.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const filteredPosts = posts
+    .filter((post) => {
+      const matchesSearch =
+        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus =
+        statusFilter === "ALL" || post.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a, b) => {
+      // Ưu tiên PENDING lên đầu
+      const statusPriority = {
+        PENDING: 1,
+        APPROVED: 2,
+        REJECTED: 3,
+        DRAFT: 4,
+      };
+
+      const priorityA = statusPriority[a.status] || 5;
+      const priorityB = statusPriority[b.status] || 5;
+
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB;
+      }
+
+      // Nếu cùng status, sắp xếp theo ngày tạo mới nhất
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
 
   const getStatusBadge = (status: Post["status"]) => {
     switch (status) {
