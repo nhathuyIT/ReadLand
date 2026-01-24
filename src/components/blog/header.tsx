@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, FileText, LogOut } from "lucide-react";
+import { User, FileText, LogOut, Settings } from "lucide-react";
 
 const Header = () => {
   const { user, logout } = useAuth();
@@ -54,7 +54,7 @@ const Header = () => {
                     to="/account/my-profile"
                     className="flex items-center cursor-pointer"
                   >
-                    <FileText className="mr-2 h-4 w-4" />
+                    <User className="mr-2 h-4 w-4" />
                     <span>My Profile</span>
                   </Link>
                 </DropdownMenuItem>
@@ -63,10 +63,24 @@ const Header = () => {
                     to="/account/my-posts"
                     className="flex items-center cursor-pointer"
                   >
-                    <User className="mr-2 h-4 w-4" />
+                    <FileText className="mr-2 h-4 w-4" />
                     <span>My Posts</span>
                   </Link>
                 </DropdownMenuItem>
+                {user.role === 0 && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link
+                        to="/admin-dashboard"
+                        className="flex items-center cursor-pointer"
+                      >
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Admin Dashboard</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout} className="cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />

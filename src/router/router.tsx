@@ -1,5 +1,7 @@
 import AppLayout from "@/layouts/app.layout";
 import { HomePage, LoginPage, MyPost, MyProfile } from "@/pages/user";
+import { AdminDashboard } from "@/pages/user/admin-page";
+import AdminGuard from "@/components/ui/admin-guard";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
 export const router = createBrowserRouter([
@@ -31,6 +33,18 @@ export const router = createBrowserRouter([
             element: <MyPost />,
           },
         ],
+      },
+      {
+        path: "/admin",
+        element: <Navigate to="/admin-dashboard" replace />,
+      },
+      {
+        path: "admin-dashboard",
+        element: (
+          <AdminGuard>
+            <AdminDashboard />
+          </AdminGuard>
+        ),
       },
     ],
   },

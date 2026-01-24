@@ -25,3 +25,27 @@ export async function getPosts(): Promise<Post[]> {
   const { data } = await api.get<Post[]>("/post");
   return data;
 }
+
+export async function updatePostStatus(
+  postId: string,
+  status: Post["status"],
+): Promise<Post> {
+  console.log(`API: Updating post ${postId} to status ${status}`);
+  console.log(`API URL: ${DEVMOCK_API}/post/${postId}`);
+
+  const { data } = await api.put<Post>(`/post/${postId}`, {
+    status,
+    updatedAt: new Date().toISOString(),
+  });
+
+  console.log("API response:", data);
+  return data;
+}
+
+export async function getPostsByStatus(
+  status?: Post["status"],
+): Promise<Post[]> {
+  const params = status ? { status } : {};
+  const { data } = await api.get<Post[]>("/post", { params });
+  return data;
+}
