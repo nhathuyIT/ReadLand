@@ -8,7 +8,7 @@ export interface Post {
   slug: string;
   view: number;
   topic: string;
-  // paragraph: string;
+  paragraph: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -19,6 +19,7 @@ export interface CreatePostInput {
   topic: string;
   imageUrl?: string;
   status: "DRAFT" | "PENDING";
+  paragraph: string;
 }
 
 export interface UpdatePostInput extends Partial<CreatePostInput> {
