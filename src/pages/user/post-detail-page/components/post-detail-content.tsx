@@ -21,7 +21,7 @@ export function PostDetailContent({ post }: PostDetailContentProps) {
       {/* Content */}
       <div className="prose prose-lg max-w-none">
         <p className="text-lg leading-relaxed text-foreground">
-          {post.description}
+          {post.paragraph}
         </p>
         {/* Add more content sections here as needed */}
       </div>

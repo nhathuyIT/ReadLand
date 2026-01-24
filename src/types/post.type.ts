@@ -8,7 +8,7 @@ export interface Post {
   slug: string;
   view: number;
   topic: string;
-  // paragraph: string;
+  paragraph: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -16,6 +16,7 @@ export interface Post {
 export interface CreatePostInput {
   title: string;
   description: string;
+  paragraph: string;
   topic: string;
   imageUrl?: string;
   status: "DRAFT" | "PENDING";

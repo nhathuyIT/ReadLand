@@ -6,7 +6,6 @@ import {
   CategoryFilter,
 } from "@/components/blog";
 import { Separator } from "@/components/ui/separator";
-import { TrendingUp, Clock, Zap } from "lucide-react";
 import usePosts from "@/hooks/use-post";
 
 const HomePage = () => {
@@ -15,11 +14,12 @@ const HomePage = () => {
   const approvedPosts = posts.filter((p) => p.status === "APPROVED");
   const featuredPost = approvedPosts[0];
   const recentPosts = approvedPosts.slice(1, 4);
-  
+
   // Filter posts based on active category
-  const filteredPosts = activeCategory === "All" 
-    ? approvedPosts.slice(4)
-    : approvedPosts.filter((p) => p.topic === activeCategory);
+  const filteredPosts =
+    activeCategory === "All"
+      ? approvedPosts.slice(4)
+      : approvedPosts.filter((p) => p.topic === activeCategory);
 
   if (loading) {
     return (
@@ -65,7 +65,6 @@ const HomePage = () => {
         {/* Featured Post */}
         <section>
           <div className="flex items-center gap-2 mb-8">
-            <TrendingUp className="h-6 w-6 text-orange-600" />
             <h2 className="text-3xl font-bold">Featured Story</h2>
           </div>
           <FeaturedPost post={featuredPost} />
@@ -76,7 +75,6 @@ const HomePage = () => {
         {/* Recent Posts */}
         <section>
           <div className="flex items-center gap-2 mb-8">
-            <Clock className="h-6 w-6 text-blue-600" />
             <h2 className="text-3xl font-bold">Recent Articles</h2>
           </div>
           <PostGrid posts={recentPosts} columns={3} />
@@ -87,7 +85,6 @@ const HomePage = () => {
         {/* Category Filter */}
         <section>
           <div className="flex items-center gap-2 mb-8">
-            <Zap className="h-6 w-6 text-purple-600" />
             <h2 className="text-3xl font-bold">Explore by Topic</h2>
           </div>
           <CategoryFilter
@@ -102,7 +99,7 @@ const HomePage = () => {
             <PostGrid posts={filteredPosts} columns={3} />
           ) : (
             <p className="text-center text-muted-foreground py-8">
-              No posts found :(
+              No posts found
             </p>
           )}
         </section>
