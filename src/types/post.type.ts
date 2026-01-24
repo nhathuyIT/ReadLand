@@ -16,6 +16,7 @@ export interface Post {
 export interface CreatePostInput {
   title: string;
   description: string;
+  paragraph: string;
   topic: string;
   imageUrl?: string;
   status: "DRAFT" | "PENDING";

@@ -63,6 +63,7 @@ export function PostFormDialog({
     defaultValues: {
       title: "",
       description: "",
+      paragraph: "",
       topic: "Technology",
       imageUrl: "",
       status: "DRAFT",
@@ -81,6 +82,7 @@ export function PostFormDialog({
       reset({
         title: post.title,
         description: post.description,
+        paragraph: post.paragraph,
         topic: post.topic,
         imageUrl: post.imageUrl || "",
         status: formStatus,
@@ -89,6 +91,7 @@ export function PostFormDialog({
       reset({
         title: "",
         description: "",
+        paragraph: "",
         topic: "Technology",
         imageUrl: "",
         status: "DRAFT",
@@ -179,6 +182,30 @@ export function PostFormDialog({
             {errors.description && (
               <p className="text-sm text-destructive">
                 {errors.description.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="paragraph" className="text-sm font-medium">
+              Paragraph <span className="text-destructive">*</span>
+            </label>
+            <Textarea
+              id="paragraph"
+              placeholder="Write the full content of your post"
+              rows={10}
+              {...register("paragraph", {
+                required: "Paragraph is required",
+                minLength: {
+                  value: 100,
+                  message: "Paragraph must be at least 100 characters",
+                },
+              })}
+              className={errors.paragraph ? "border-destructive" : ""}
+            />
+            {errors.paragraph && (
+              <p className="text-sm text-destructive">
+                {errors.paragraph.message}
               </p>
             )}
           </div>

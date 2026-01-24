@@ -9,6 +9,10 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+export interface SignupPayload {
+  username: string;
+  password: string;
+}
 export const login = async (
   username: string,
   password: string,
@@ -54,3 +58,8 @@ export async function getPostsByStatus(
   const { data } = await api.get<Post[]>("/post", { params });
   return data;
 }
+export const signup = async (payload: SignupPayload): Promise<User> => {
+  // Directly create new user (POST)
+  const { data: user } = await api.post<User>("/user", payload);
+  return user;
+};

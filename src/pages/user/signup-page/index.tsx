@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Mail, Lock, BookOpen, UserPlus } from "lucide-react";
 import { useState } from "react";
-import { signup } from "@/api/signup-api";
+import { signup } from "@/api/api";
 import { useAuth } from "@/context/auth-context";
 
 interface SignupFormValues {
