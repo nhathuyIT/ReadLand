@@ -20,39 +20,39 @@ const MyProfile = () => {
   const roleLabel = user.role === 0 ? "Admin" : "User";
 
   return (
-    <div className="min-h-screen bg-background py-12">
+    <div className="min-h-screen bg-background py-6 md:py-12">
       <div className="container mx-auto px-4 max-w-4xl">
-        <h1 className="text-4xl font-bold mb-8">Your Profile</h1>
+        <h1 className="text-3xl md:text-4xl font-bold mb-6 md:mb-8">Your Profile</h1>
 
         {/* Profile Card */}
         <Card>
           <CardHeader>
-            <CardTitle>Profile Information</CardTitle>
+            <CardTitle className="text-lg md:text-xl">Profile Information</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
+            <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start">
               {/* Avatar */}
-              <Avatar className="h-32 w-32">
+              <Avatar className="h-24 w-24 md:h-32 md:w-32">
                 <AvatarImage src={user.avatarUrl} alt={user.username} />
-                <AvatarFallback className="text-4xl">
-                  <User className="h-16 w-16" />
+                <AvatarFallback className="text-3xl md:text-4xl">
+                  <User className="h-12 w-12 md:h-16 md:w-16" />
                 </AvatarFallback>
               </Avatar>
 
               {/* User Info */}
-              <div className="flex-1 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
+              <div className="flex-1 w-full space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="text-center sm:text-left">
                     <label className="text-sm text-muted-foreground">Username:</label>
-                    <p className="text-2xl font-semibold">{user.username}</p>
+                    <p className="text-xl md:text-2xl font-semibold break-words">{user.username}</p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-center sm:text-right">
                     <label className="text-sm text-muted-foreground">User ID:</label>
-                    <p className="font-mono text-sm text-muted-foreground">{user.id}</p>
+                    <p className="font-mono text-xs md:text-sm text-muted-foreground break-all">{user.id}</p>
                   </div>
                 </div>
 
-                <div>
+                <div className="text-center sm:text-left">
                   <label className="text-sm text-muted-foreground">Role:</label>
                   <div className="mt-1">
                     <Badge 
