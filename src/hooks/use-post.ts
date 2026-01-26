@@ -56,28 +56,34 @@ function usePosts() {
       try {
         const data = await getPosts();
 
-        // Fetch author information for each post
-        const postsWithAuthors = await Promise.all(
-          data.map(async (post) => {
+        const uniqueUserIds = [...new Set(data.map((post) => post.userId))];
+
+        const userMap = new Map();
+        await Promise.all(
+          uniqueUserIds.map(async (userId) => {
             try {
-              const author = await getUserById(post.userId);
-              return {
-                ...post,
-                author: {
-                  username: author.username,
-                  avatarUrl: author.avatarUrl,
-                },
-              };
+              const author = await getUserById(userId);
+              userMap.set(userId, {
+                username: author.username,
+                avatarUrl: author.avatarUrl,
+              });
             } catch (error) {
-              // If user fetch fails, return post without author info
-              console.error(
-                `Failed to fetch author for post ${post.id}:`,
-                error,
-              );
-              return post;
+              console.error(`Failed to fetch user ${userId}:`, error);
+              userMap.set(userId, {
+                username: "Unknown Author",
+                avatarUrl: "",
+              });
             }
           }),
         );
+
+        const postsWithAuthors = data.map((post) => ({
+          ...post,
+          author: userMap.get(post.userId) || {
+            username: "Unknown Author",
+            avatarUrl: "",
+          },
+        }));
 
         dispatch({ type: "FETCH_SUCCESS", payload: postsWithAuthors });
       } catch (error) {

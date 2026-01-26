@@ -38,7 +38,6 @@ const MyPost = () => {
     ];
 
     posts.forEach((post) => {
-      // Only count if status is valid
       if (validStatuses.includes(post.status as PostStatus)) {
         counts[post.status as PostStatus]++;
       }
@@ -94,16 +93,9 @@ const MyPost = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="container mx-auto flex min-h-[60vh] items-center justify-center px-4 py-16">
-        <div className="text-center space-y-4">
-          <div className="rounded-lg bg-destructive/10 p-4">
-            <p className="text-destructive font-medium">Error: {error}</p>
-          </div>
-        </div>
-      </div>
-    );
+  if (error && posts.length === 0 && !loading) {
+    // Don't show error for new users with no posts
+    // Error state is now optional - we show empty state instead
   }
 
   return (

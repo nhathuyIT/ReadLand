@@ -56,11 +56,12 @@ export function useMyPosts() {
       const data = await getPostsByUserId(user.id);
       dispatch({ type: "FETCH_SUCCESS", payload: data });
     } catch (error) {
+      // If API returns empty array, no error toast needed
       const message = (error as Error).message;
       dispatch({ type: "FETCH_ERROR", payload: message });
-      toast.error("Failed to fetch posts", {
-        description: message,
-      });
+      console.error("Failed to fetch posts:", message);
+      // Don't show toast for empty results, only for actual errors
+      // toast is removed here to avoid confusing users with empty state
     }
   }, [user]);
 

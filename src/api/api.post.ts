@@ -9,21 +9,21 @@ const api = axios.create({
   },
 });
 
-/**
- * Get posts by user ID
- * Used in My Posts page to fetch user's own posts
- */
 export async function getPostsByUserId(userId: string): Promise<Post[]> {
-  const { data } = await api.get<Post[]>("/post", {
-    params: { userId },
-  });
-  return data.filter((post) => String(post.userId) === String(userId));
+  try {
+    const { data } = await api.get<Post[]>("/post", {
+      params: { userId },
+    });
+    return data.filter((post) => String(post.userId) === String(userId));
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return [];
+    }
+    console.warn(`Error fetching posts for user ${userId}:`, error);
+    return [];
+  }
 }
 
-/**
- * Create a new post
- * Used in My Posts page when user creates a post
- */
 export async function createPost(
   post: CreatePostInput & { userId: string },
 ): Promise<Post> {
