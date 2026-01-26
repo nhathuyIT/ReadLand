@@ -4,6 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   CheckCircle2,
   XCircle,
   Clock,
@@ -12,6 +19,7 @@ import {
   Calendar,
   Filter,
   User,
+  FileText,
 } from "lucide-react";
 import type { Post } from "@/types/post.type";
 import type { User as userpost } from "@/types/user.type";
@@ -58,6 +66,8 @@ const AdminDashboard = () => {
   const [updatingPostIds, setUpdatingPostIds] = useState<Set<string>>(
     new Set(),
   );
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const {
     handleStatusUpdate,
@@ -79,6 +89,11 @@ const AdminDashboard = () => {
 
     fetchPosts();
   }, []);
+
+  const handleViewDetails = (post: Post) => {
+    setSelectedPost(post);
+    setIsDialogOpen(true);
+  };
 
   const handleStatusChange = async (
     postId: string,
@@ -395,6 +410,15 @@ const AdminDashboard = () => {
 
                     {/* Action Buttons */}
                     <div className="flex flex-col gap-2 lg:w-32">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleViewDetails(post)}
+                        className="mb-2"
+                      >
+                        <FileText className="h-4 w-4 mr-1" />
+                        View Details
+                      </Button>
                       {post.status === "PENDING" && (
                         <>
                           <Button
@@ -463,6 +487,114 @@ const AdminDashboard = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Post Detail Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          {selectedPost && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-xl font-bold">
+                  {selectedPost.title}
+                </DialogTitle>
+                <DialogDescription className="text-muted-foreground">
+                  Post Details
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-6">
+                {/* Post Image */}
+                {selectedPost.imageUrl && (
+                  <div className="w-full h-64 rounded-lg overflow-hidden">
+                    <img
+                      src={selectedPost.imageUrl}
+                      alt={selectedPost.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+
+                {/* Post Info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                      Author
+                    </h4>
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      <UserName userId={selectedPost.userId} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                      Status
+                    </h4>
+                    {getStatusBadge(selectedPost.status)}
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                      Topic
+                    </h4>
+                    <Badge variant="outline">{selectedPost.topic}</Badge>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                      Views
+                    </h4>
+                    <div className="flex items-center gap-1">
+                      <Eye className="h-4 w-4" />
+                      <span>{selectedPost.view}</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                      Created
+                    </h4>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      <span>
+                        {new Date(selectedPost.createdAt).toLocaleDateString(
+                          "en-US",
+                        )}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                      Last Updated
+                    </h4>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      <span>
+                        {new Date(selectedPost.updatedAt).toLocaleDateString(
+                          "en-US",
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                    Description
+                  </h4>
+                  <p className="text-sm leading-relaxed">
+                    {selectedPost.description}
+                  </p>
+                </div>
+
+                {/* Content */}
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
