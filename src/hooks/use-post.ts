@@ -1,5 +1,4 @@
 import { getPosts, getUserById } from "@/api/api";
-import { useAuth } from "@/context/auth-context";
 import type { Post } from "@/types/post.type";
 import { useEffect, useReducer } from "react";
 
@@ -49,7 +48,6 @@ function postsReducer(state: PostsState, action: PostsAction): PostsState {
   }
 }
 function usePosts() {
-  const { user, hasRole } = useAuth();
   const [state, dispatch] = useReducer(postsReducer, initialState);
 
   useEffect(() => {
@@ -57,7 +55,7 @@ function usePosts() {
       dispatch({ type: "FETCH_START" });
       try {
         const data = await getPosts();
-        
+
         // Fetch author information for each post
         const postsWithAuthors = await Promise.all(
           data.map(async (post) => {
@@ -72,12 +70,15 @@ function usePosts() {
               };
             } catch (error) {
               // If user fetch fails, return post without author info
-              console.error(`Failed to fetch author for post ${post.id}:`, error);
+              console.error(
+                `Failed to fetch author for post ${post.id}:`,
+                error,
+              );
               return post;
             }
-          })
+          }),
         );
-        
+
         dispatch({ type: "FETCH_SUCCESS", payload: postsWithAuthors });
       } catch (error) {
         dispatch({ type: "FETCH_ERROR", payload: (error as Error).message });
