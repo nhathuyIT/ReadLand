@@ -57,12 +57,10 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
       <HeroSection />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-16 space-y-16">
-        {/* Featured Post */}
         <section>
           <div className="flex items-center gap-2 mb-8">
             <h2 className="text-3xl font-bold">Featured Story</h2>
@@ -72,7 +70,6 @@ const HomePage = () => {
 
         <Separator />
 
-        {/* Recent Posts */}
         <section>
           <div className="flex items-center gap-2 mb-8">
             <h2 className="text-3xl font-bold">Recent Articles</h2>
@@ -82,7 +79,6 @@ const HomePage = () => {
 
         <Separator />
 
-        {/* Category Filter */}
         <section>
           <div className="flex items-center gap-2 mb-8">
             <h2 className="text-3xl font-bold">Explore by Topic</h2>
@@ -93,7 +89,6 @@ const HomePage = () => {
           />
         </section>
 
-        {/* More Posts */}
         <section>
           {filteredPosts.length > 0 ? (
             <PostGrid posts={filteredPosts} columns={3} />

@@ -1,3 +1,4 @@
+import { extractIdFromSlug } from "@/lib/slugify";
 import type { Post } from "@/types/post.type";
 import type { User } from "@/types/user.type";
 import axios from "axios";
@@ -32,7 +33,39 @@ export async function getPosts(): Promise<Post[]> {
 
 export async function getPostById(postId: string): Promise<Post> {
   const { data } = await api.get<Post>(`/post/${postId}`);
-  return data;
+  
+  try {
+    const author = await getUserById(data.userId);
+    return {
+      ...data,
+      author: {
+        username: author.username,
+        avatarUrl: author.avatarUrl,
+      },
+    };
+  } catch (error) {
+    console.error(`Failed to fetch author for post ${data.id}:`, error);
+    return data;
+  }
+}
+
+export async function getPostBySlug(slug: string): Promise<Post> {
+  const postId = extractIdFromSlug(slug);
+  const { data } = await api.get<Post>(`/post/${postId}`);
+  
+  try {
+    const author = await getUserById(data.userId);
+    return {
+      ...data,
+      author: {
+        username: author.username,
+        avatarUrl: author.avatarUrl,
+      },
+    };
+  } catch (error) {
+    console.error(`Failed to fetch author for post ${data.id}:`, error);
+    return data;
+  }
 }
 
 export async function updatePostStatus(
@@ -59,8 +92,12 @@ export async function getPostsByStatus(
   return data;
 }
 
+export async function getUserById(userId: string): Promise<User> {
+  const { data } = await api.get<User>(`/user/${userId}`);
+  return data;
+}
+
 export const signup = async (payload: SignupPayload): Promise<User> => {
-  // Directly create new user (POST)
   const { data: user } = await api.post<User>("/user", payload);
   return user;
 };

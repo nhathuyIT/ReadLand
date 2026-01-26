@@ -4,18 +4,56 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   CheckCircle2,
   XCircle,
   Clock,
   Search,
   Eye,
   Calendar,
-  User,
   Filter,
+  User,
 } from "lucide-react";
 import type { Post } from "@/types/post.type";
-import { getPosts } from "@/api/api";
+import type { User as userpost } from "@/types/user.type";
+import { getPosts, getUserById } from "@/api/api";
 import { useAdminOperations } from "@/hooks/use-admin-operations";
+
+// Component to fetch and display username
+const UserName = ({ userId }: { userId: string }) => {
+  const [user, setUser] = useState<userpost | null>(null);
+  console.log(user?.id);
+  const [username, setUsername] = useState<string>(
+    userId ? "Loading..." : "Unknown",
+  );
+
+  useEffect(() => {
+    if (!userId) {
+      return;
+    }
+
+    const fetchUser = async () => {
+      try {
+        const fetchedUser = await getUserById(userId);
+        setUser(fetchedUser);
+        setUsername(fetchedUser.username);
+      } catch (error) {
+        console.error(`Error fetching user ${userId}:`, error);
+        setUsername("Unknown");
+      }
+    };
+
+    fetchUser();
+  }, [userId]);
+
+  return <span>{username}</span>;
+};
 
 const AdminDashboard = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -27,6 +65,8 @@ const AdminDashboard = () => {
   const [updatingPostIds, setUpdatingPostIds] = useState<Set<string>>(
     new Set(),
   );
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const {
     handleStatusUpdate,
@@ -48,6 +88,11 @@ const AdminDashboard = () => {
 
     fetchPosts();
   }, []);
+
+  const handleViewDetails = (post: Post) => {
+    setSelectedPost(post);
+    setIsDialogOpen(true);
+  };
 
   const handleStatusChange = async (
     postId: string,
@@ -86,7 +131,7 @@ const AdminDashboard = () => {
       return matchesSearch && matchesStatus;
     })
     .sort((a, b) => {
-      // Ưu tiên PENDING lên đầu
+      // Prioritize PENDING first
       const statusPriority = {
         PENDING: 1,
         APPROVED: 2,
@@ -101,7 +146,11 @@ const AdminDashboard = () => {
         return priorityA - priorityB;
       }
 
-      // Nếu cùng status, sắp xếp theo ngày tạo mới nhất
+      // If same status, sort by newest creation date
+      // Prioritize PENDING posts first
+      if (a.status === "PENDING" && b.status !== "PENDING") return -1;
+      if (a.status !== "PENDING" && b.status === "PENDING") return 1;
+      // If both have same priority, sort by creation date (newest first)
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
 
@@ -114,7 +163,7 @@ const AdminDashboard = () => {
             className="bg-yellow-50 text-yellow-700 border-yellow-200"
           >
             <Clock className="w-3 h-3 mr-1" />
-            Đang chờ
+            Pending
           </Badge>
         );
       case "APPROVED":
@@ -124,7 +173,7 @@ const AdminDashboard = () => {
             className="bg-green-50 text-green-700 border-green-200"
           >
             <CheckCircle2 className="w-3 h-3 mr-1" />
-            Đã duyệt
+            Approved
           </Badge>
         );
       case "REJECTED":
@@ -134,7 +183,7 @@ const AdminDashboard = () => {
             className="bg-red-50 text-red-700 border-red-200"
           >
             <XCircle className="w-3 h-3 mr-1" />
-            Từ chối
+            Rejected
           </Badge>
         );
       case "DRAFT":
@@ -143,11 +192,11 @@ const AdminDashboard = () => {
             variant="secondary"
             className="bg-gray-50 text-gray-700 border-gray-200"
           >
-            Bản nháp
+            Draft
           </Badge>
         );
       default:
-        return <Badge variant="outline">Không rõ</Badge>;
+        return <Badge variant="outline">Unknown</Badge>;
     }
   };
 
@@ -163,7 +212,7 @@ const AdminDashboard = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Đang tải dữ liệu...</div>
+        <div className="text-lg">Loading data...</div>
       </div>
     );
   }
@@ -173,7 +222,7 @@ const AdminDashboard = () => {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
-        <p className="text-muted-foreground">Quản lý và duyệt các bài viết</p>
+        <p className="text-muted-foreground">Manage and approve posts</p>
         {adminError && (
           <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
             <p className="text-sm text-red-700">{adminError}</p>
@@ -183,7 +232,7 @@ const AdminDashboard = () => {
               onClick={clearError}
               className="mt-2 text-red-700 hover:text-red-800"
             >
-              Đóng
+              Close
             </Button>
           </div>
         )}
@@ -196,7 +245,7 @@ const AdminDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
-                  Tổng bài viết
+                  Total Posts
                 </p>
                 <p className="text-3xl font-bold">{stats.total}</p>
               </div>
@@ -210,7 +259,7 @@ const AdminDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
-                  Chờ duyệt
+                  Pending
                 </p>
                 <p className="text-3xl font-bold text-yellow-600">
                   {stats.pending}
@@ -226,7 +275,7 @@ const AdminDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
-                  Đã duyệt
+                  Approved
                 </p>
                 <p className="text-3xl font-bold text-green-600">
                   {stats.approved}
@@ -242,7 +291,7 @@ const AdminDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
-                  Từ chối
+                  Rejected
                 </p>
                 <p className="text-3xl font-bold text-red-600">
                   {stats.rejected}
@@ -262,7 +311,7 @@ const AdminDashboard = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
-                  placeholder="Tìm kiếm bài viết..."
+                  placeholder="Search posts..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -278,10 +327,10 @@ const AdminDashboard = () => {
                 }
                 className="px-3 py-2 border border-gray-300 rounded-md text-sm"
               >
-                <option value="ALL">Tất cả trạng thái</option>
-                <option value="PENDING">Chờ duyệt</option>
-                <option value="APPROVED">Đã duyệt</option>
-                <option value="REJECTED">Từ chối</option>
+                <option value="ALL">All Statuses</option>
+                <option value="PENDING">Pending</option>
+                <option value="APPROVED">Approved</option>
+                <option value="REJECTED">Rejected</option>
               </select>
             </div>
           </div>
@@ -291,13 +340,13 @@ const AdminDashboard = () => {
       {/* Posts Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Danh sách bài viết ({filteredPosts.length})</CardTitle>
+          <CardTitle>Posts List ({filteredPosts.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {filteredPosts.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                Không tìm thấy bài viết nào
+                No posts found
               </div>
             ) : (
               filteredPosts.map((post) => (
@@ -322,27 +371,30 @@ const AdminDashboard = () => {
                       <div className="flex items-start justify-between mb-3">
                         <div>
                           <h3 className="text-xl font-semibold mb-2">
-                            {post.description}
+                            {post.title}
                           </h3>
                           <p className="text-muted-foreground mb-2 line-clamp-2">
-                            {post.title}
+                            {post.description}
                           </p>
                           <div className="flex items-center gap-4 text-sm text-muted-foreground">
                             <div className="flex items-center gap-1">
                               <User className="h-4 w-4" />
-                              <span>ID: {post.userId}</span>
+                              <span>
+                                User's name: <UserName userId={post.userId} />
+                              </span>
+                              <span></span>
                             </div>
                             <div className="flex items-center gap-1">
                               <Calendar className="h-4 w-4" />
                               <span>
                                 {new Date(post.createdAt).toLocaleDateString(
-                                  "vi-VN",
+                                  "en-US",
                                 )}
                               </span>
                             </div>
                             <div className="flex items-center gap-1">
                               <Eye className="h-4 w-4" />
-                              <span>{post.view} lượt xem</span>
+                              <span>{post.view} views</span>
                             </div>
                           </div>
                         </div>
@@ -350,13 +402,21 @@ const AdminDashboard = () => {
                       </div>
 
                       <div className="flex items-center gap-2 mt-4">
-                        <span className="text-sm font-medium">Chủ đề:</span>
+                        <span className="text-sm font-medium">Topic:</span>
                         <Badge variant="outline">{post.topic}</Badge>
                       </div>
                     </div>
 
                     {/* Action Buttons */}
                     <div className="flex flex-col gap-2 lg:w-32">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleViewDetails(post)}
+                        className="mb-2"
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                      </Button>
                       {post.status === "PENDING" && (
                         <>
                           <Button
@@ -369,8 +429,8 @@ const AdminDashboard = () => {
                           >
                             <CheckCircle2 className="h-4 w-4 mr-1" />
                             {updatingPostIds.has(post.id)
-                              ? "Đang xử lý..."
-                              : "Duyệt"}
+                              ? "Processing..."
+                              : "Approve"}
                           </Button>
                           <Button
                             size="sm"
@@ -382,8 +442,8 @@ const AdminDashboard = () => {
                           >
                             <XCircle className="h-4 w-4 mr-1" />
                             {updatingPostIds.has(post.id)
-                              ? "Đang xử lý..."
-                              : "Từ chối"}
+                              ? "Processing..."
+                              : "Reject"}
                           </Button>
                         </>
                       )}
@@ -398,8 +458,8 @@ const AdminDashboard = () => {
                         >
                           <XCircle className="h-4 w-4 mr-1" />
                           {updatingPostIds.has(post.id)
-                            ? "Đang xử lý..."
-                            : "Hủy duyệt"}
+                            ? "Processing..."
+                            : ""}
                         </Button>
                       )}
                       {post.status === "REJECTED" && (
@@ -413,8 +473,8 @@ const AdminDashboard = () => {
                         >
                           <CheckCircle2 className="h-4 w-4 mr-1" />
                           {updatingPostIds.has(post.id)
-                            ? "Đang xử lý..."
-                            : "Duyệt lại"}
+                            ? "Processing..."
+                            : "Re-approve"}
                         </Button>
                       )}
                     </div>
@@ -425,6 +485,126 @@ const AdminDashboard = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Post Detail Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          {selectedPost && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-xl font-bold">
+                  {selectedPost.title}
+                </DialogTitle>
+                <DialogDescription className="text-muted-foreground">
+                  Post Details
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-6">
+                {/* Post Image */}
+                {selectedPost.imageUrl && (
+                  <div className="w-full h-64 rounded-lg overflow-hidden">
+                    <img
+                      src={selectedPost.imageUrl}
+                      alt={selectedPost.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+
+                {/* Post Info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                      Author
+                    </h4>
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      <UserName userId={selectedPost.userId} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                      Status
+                    </h4>
+                    {getStatusBadge(selectedPost.status)}
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                      Topic
+                    </h4>
+                    <Badge variant="outline">{selectedPost.topic}</Badge>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                      Views
+                    </h4>
+                    <div className="flex items-center gap-1">
+                      <Eye className="h-4 w-4" />
+                      <span>{selectedPost.view}</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                      Created
+                    </h4>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      <span>
+                        {new Date(selectedPost.createdAt).toLocaleDateString(
+                          "en-US",
+                        )}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                      Last Updated
+                    </h4>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      <span>
+                        {new Date(selectedPost.updatedAt).toLocaleDateString(
+                          "en-US",
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                    Description
+                  </h4>
+                  <p className="text-sm leading-relaxed">
+                    {selectedPost.description}
+                  </p>
+                </div>
+
+                {/* Content */}
+                {selectedPost.paragraph && (
+                  <div>
+                    <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                      Content
+                    </h4>
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                        {selectedPost.paragraph}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

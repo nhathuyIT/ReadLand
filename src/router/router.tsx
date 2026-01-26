@@ -1,7 +1,14 @@
 import AppLayout from "@/layouts/app.layout";
 import { AdminDashboard } from "@/pages/user/admin-page";
 import AdminGuard from "@/components/ui/admin-guard";
-import { HomePage, LoginPage, MyPost, MyProfile, SignupPage, PostDetailPage } from "@/pages/user";
+import {
+  HomePage,
+  LoginPage,
+  MyPost,
+  MyProfile,
+  SignupPage,
+  PostDetailPage,
+} from "@/pages/user";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
 export const router = createBrowserRouter([
@@ -13,7 +20,7 @@ export const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: "/post/:id",
+        path: "/post/:slug",
         element: <PostDetailPage />,
       },
       {

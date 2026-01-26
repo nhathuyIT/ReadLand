@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,40 +7,33 @@ import { Separator } from "@/components/ui/separator";
 import { LogIn, Mail, Lock, BookOpen } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 
+interface LoginFormData {
+  username: string;
+  password: string;
+}
+
 const LoginPage = () => {
   const { login } = useAuth();
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
-
+  const onSubmit = async (data: LoginFormData) => {
     try {
-      await login(formData.username, formData.password);
+      await login(data.username, data.password);
     } catch {
-      setError("Invalid username or password");
-    } finally {
-      setIsLoading(false);
+      setError("root", {
+        message: "Invalid username or password",
+      });
     }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
   };
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-slate-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo/Brand */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 group">
             <div className="h-12 w-12 rounded-lg bg-primary flex items-center justify-center transition-transform group-hover:scale-105">
@@ -53,7 +46,6 @@ const LoginPage = () => {
           </p>
         </div>
 
-        {/* Login Card */}
         <Card className="shadow-xl">
           <CardHeader className="space-y-1">
             <div className="flex items-center gap-2">
@@ -65,8 +57,7 @@ const LoginPage = () => {
             </p>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Username Field */}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
                 <label
                   htmlFor="username"
@@ -78,19 +69,22 @@ const LoginPage = () => {
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="username"
-                    name="username"
                     type="text"
                     placeholder="Enter your username"
-                    value={formData.username}
-                    onChange={handleChange}
                     className="pl-10"
-                    required
-                    disabled={isLoading}
+                    {...register("username", {
+                      required: "Username is required",
+                    })}
+                    disabled={isSubmitting}
                   />
                 </div>
+                {errors.username && (
+                  <p className="text-sm text-destructive">
+                    {errors.username.message}
+                  </p>
+                )}
               </div>
 
-              {/* Password Field */}
               <div className="space-y-2">
                 <label
                   htmlFor="password"
@@ -102,32 +96,38 @@ const LoginPage = () => {
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="password"
-                    name="password"
                     type="password"
                     placeholder="Enter your password"
-                    value={formData.password}
-                    onChange={handleChange}
                     className="pl-10"
-                    required
-                    disabled={isLoading}
+                    {...register("password", {
+                      required: "Password is required",
+                      minLength: {
+                        value: 3,
+                        message: "Password must be at least 6 characters",
+                      },
+                    })}
+                    disabled={isSubmitting}
                   />
                 </div>
+                {errors.password && (
+                  <p className="text-sm text-destructive">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
-              {/* Error Message */}
-              {error && (
+              {errors.root && (
                 <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
-                  {error}
+                  {errors.root.message}
                 </div>
               )}
 
-              {/* Submit Button */}
               <Button
                 type="submit"
                 className="w-full bg-primary hover:bg-primary/90"
-                disabled={isLoading}
+                disabled={isSubmitting}
               >
-                {isLoading ? "Signing in..." : "Sign In"}
+                {isSubmitting ? "Signing in..." : "Sign In"}
               </Button>
             </form>
 
@@ -146,7 +146,6 @@ const LoginPage = () => {
           </CardContent>
         </Card>
 
-        {/* Footer */}
         <p className="mt-8 text-center text-xs text-muted-foreground">
           By signing in, you agree to our Terms of Service and Privacy Policy
         </p>

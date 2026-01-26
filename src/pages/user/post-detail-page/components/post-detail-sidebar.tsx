@@ -18,13 +18,13 @@ export function PostDetailSidebar({ post }: PostDetailSidebarProps) {
         <CardContent className="space-y-4">
           <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12">
-              <AvatarImage src="" />
+              <AvatarImage src={post.author?.avatarUrl || ""} />
               <AvatarFallback>
                 <User className="h-6 w-6" />
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-semibold">Author Name</p>
+              <p className="font-semibold">{post.author?.username || "Author"}</p>
               <p className="text-sm text-muted-foreground">Writer</p>
             </div>
           </div>

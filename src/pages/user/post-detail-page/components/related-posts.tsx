@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
 import type { Post } from "@/types/post.type";
 import { useNavigate } from "react-router-dom";
+import { createPostSlug } from "@/lib/slugify";
 
 interface RelatedPostsProps {
   posts: Post[];
@@ -20,7 +21,10 @@ export function RelatedPosts({ posts }: RelatedPostsProps) {
           <Card
             key={post.id}
             className="group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300"
-            onClick={() => navigate(`/post/${post.id}`)}
+            onClick={() => {
+              const slug = createPostSlug(post.title, post.id);
+              navigate(`/post/${slug}`);
+            }}
           >
             {post.imageUrl && (
               <div className="relative overflow-hidden h-48">
