@@ -33,13 +33,39 @@ export async function getPosts(): Promise<Post[]> {
 
 export async function getPostById(postId: string): Promise<Post> {
   const { data } = await api.get<Post>(`/post/${postId}`);
-  return data;
+  
+  try {
+    const author = await getUserById(data.userId);
+    return {
+      ...data,
+      author: {
+        username: author.username,
+        avatarUrl: author.avatarUrl,
+      },
+    };
+  } catch (error) {
+    console.error(`Failed to fetch author for post ${data.id}:`, error);
+    return data;
+  }
 }
 
 export async function getPostBySlug(slug: string): Promise<Post> {
   const postId = extractIdFromSlug(slug);
   const { data } = await api.get<Post>(`/post/${postId}`);
-  return data;
+  
+  try {
+    const author = await getUserById(data.userId);
+    return {
+      ...data,
+      author: {
+        username: author.username,
+        avatarUrl: author.avatarUrl,
+      },
+    };
+  } catch (error) {
+    console.error(`Failed to fetch author for post ${data.id}:`, error);
+    return data;
+  }
 }
 
 export async function updatePostStatus(

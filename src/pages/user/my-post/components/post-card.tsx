@@ -60,12 +60,12 @@ export function PostCard({ post, variant = "default" }: PostCardProps) {
           <div className="flex items-center justify-between pt-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Avatar className="h-6 w-6">
-                <AvatarImage src="" />
+                <AvatarImage src={post.author?.avatarUrl || ""} />
                 <AvatarFallback>
                   <User className="h-3 w-3" />
                 </AvatarFallback>
               </Avatar>
-              <span>Author</span>
+              <span>{post.author?.username || "Author"}</span>
             </div>
             <div className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
