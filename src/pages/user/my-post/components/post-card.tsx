@@ -48,13 +48,13 @@ export function PostCard({ post, variant = "default" }: PostCardProps) {
               isFeatured ? "text-3xl" : "text-xl"
             }`}
           >
-            {post.description}
+            {post.title}
           </h3>
 
           <p
             className={`text-muted-foreground line-clamp-2 ${isFeatured ? "text-base" : "text-sm"}`}
           >
-            {post.title}
+            {post.description}
           </p>
 
           <div className="flex items-center justify-between pt-4 text-sm text-muted-foreground">
