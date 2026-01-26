@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -33,8 +32,8 @@ const SignupPage = () => {
       await login(data.username, data.password);
       // login will redirect
     } catch (err: unknown) {
-       if (err instanceof Error) setError(err.message);
-    }finally {
+      if (err instanceof Error) setError(err.message);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -68,9 +67,11 @@ const SignupPage = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {/* Username Field */}
               <div className="space-y-2">
-                <label htmlFor="username" className="text-sm font-medium leading-none">
+                <label
+                  htmlFor="username"
+                  className="text-sm font-medium leading-none"
+                >
                   Username
                 </label>
                 <div className="relative">
@@ -89,13 +90,18 @@ const SignupPage = () => {
                   />
                 </div>
                 {errors.username && (
-                  <span className="text-xs text-destructive">{errors.username.message}</span>
+                  <span className="text-xs text-destructive">
+                    {errors.username.message}
+                  </span>
                 )}
               </div>
 
               {/* Password Field */}
               <div className="space-y-2">
-                <label htmlFor="password" className="text-sm font-medium leading-none">
+                <label
+                  htmlFor="password"
+                  className="text-sm font-medium leading-none"
+                >
                   Password
                 </label>
                 <div className="relative">
@@ -114,7 +120,9 @@ const SignupPage = () => {
                   />
                 </div>
                 {errors.password && (
-                  <span className="text-xs text-destructive">{errors.password.message}</span>
+                  <span className="text-xs text-destructive">
+                    {errors.password.message}
+                  </span>
                 )}
               </div>
 
