@@ -9,12 +9,12 @@ import {
   PostDetailSidebar,
   RelatedPosts,
 } from "./components";
-import { getPostById } from "@/api/api";
+import { getPostBySlug } from "@/api/api";
 import usePosts from "@/hooks/use-post";
 import type { Post } from "@/types/post.type";
 
 const PostDetailPage = () => {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { posts } = usePosts();
   const [post, setPost] = useState<Post | null>(null);
@@ -26,15 +26,15 @@ const PostDetailPage = () => {
     window.scrollTo(0, 0);
 
     async function fetchPost() {
-      if (!id) {
-        setError("Post ID is missing");
+      if (!slug) {
+        setError("Post slug is missing");
         setLoading(false);
         return;
       }
 
       try {
         setLoading(true);
-        const data = await getPostById(id);
+        const data = await getPostBySlug(slug);
         setPost(data);
       } catch (err) {
         setError((err as Error).message);
@@ -44,7 +44,7 @@ const PostDetailPage = () => {
     }
 
     fetchPost();
-  }, [id]);
+  }, [slug]);
 
   // Loading state
   if (loading) {
@@ -63,9 +63,7 @@ const PostDetailPage = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
-          <p className="text-destructive">
-            {error || "Post not found"}
-          </p>
+          <p className="text-destructive">{error || "Post not found"}</p>
           <Button onClick={() => navigate("/")}>Back to Home</Button>
         </div>
       </div>
@@ -74,18 +72,17 @@ const PostDetailPage = () => {
 
   // Filter related posts (same topic, exclude current)
   const relatedPosts = posts
-    .filter((p) => p.topic === post.topic && p.id !== post.id && p.status === "APPROVED")
+    .filter(
+      (p) =>
+        p.topic === post.topic && p.id !== post.id && p.status === "APPROVED",
+    )
     .slice(0, 3);
 
   return (
     <div className="min-h-screen bg-background">
       {/* Back Button */}
       <div className="container mx-auto px-4 py-6">
-        <Button
-          variant="ghost"
-          onClick={() => navigate(-1)}
-          className="gap-2"
-        >
+        <Button variant="ghost" onClick={() => navigate(-1)} className="gap-2">
           <ArrowLeft className="h-4 w-4" />
           Back
         </Button>

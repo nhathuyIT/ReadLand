@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, User } from "lucide-react";
 import type { Post } from "@/types/post.type";
 import { useNavigate } from "react-router-dom";
+import { createPostSlug } from "@/lib/slugify";
 
 interface PostCardProps {
   post: Post;
@@ -15,11 +16,12 @@ export function PostCard({ post, variant = "default" }: PostCardProps) {
   const isFeatured = variant === "featured";
 
   const handleClick = () => {
-    navigate(`/post/${post.id}`);
+    const slug = createPostSlug(post.title, post.id);
+    navigate(`/post/${slug}`);
   };
 
   return (
-    <Card 
+    <Card
       className="group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300"
       onClick={handleClick}
     >

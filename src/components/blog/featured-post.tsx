@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { createPostSlug } from "@/lib/slugify";
 
 interface FeaturedPostProps {
   post: Post;
@@ -12,7 +13,8 @@ export function FeaturedPost({ post }: FeaturedPostProps) {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/post/${post.id}`);
+    const slug = createPostSlug(post.title, post.id);
+    navigate(`/post/${slug}`);
   };
 
   return (

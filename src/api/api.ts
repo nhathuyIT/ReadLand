@@ -1,5 +1,6 @@
 import type { Post } from "@/types/post.type";
 import type { User } from "@/types/user.type";
+import { extractIdFromSlug } from "@/lib/slugify";
 import axios from "axios";
 
 const DEVMOCK_API = import.meta.env.VITE_DEVMOCK_API;
@@ -35,6 +36,12 @@ export async function getPostById(postId: string): Promise<Post> {
   return data;
 }
 
+export async function getPostBySlug(slug: string): Promise<Post> {
+  const postId = extractIdFromSlug(slug);
+  const { data } = await api.get<Post>(`/post/${postId}`);
+  return data;
+}
+
 export async function updatePostStatus(
   postId: string,
   status: Post["status"],
@@ -60,7 +67,6 @@ export async function getPostsByStatus(
 }
 
 export const signup = async (payload: SignupPayload): Promise<User> => {
-  // Directly create new user (POST)
   const { data: user } = await api.post<User>("/user", payload);
   return user;
 };
