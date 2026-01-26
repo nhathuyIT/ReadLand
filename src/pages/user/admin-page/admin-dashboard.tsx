@@ -19,7 +19,6 @@ import {
   Calendar,
   Filter,
   User,
-  FileText,
 } from "lucide-react";
 import type { Post } from "@/types/post.type";
 import type { User as userpost } from "@/types/user.type";
@@ -416,8 +415,7 @@ const AdminDashboard = () => {
                         onClick={() => handleViewDetails(post)}
                         className="mb-2"
                       >
-                        <FileText className="h-4 w-4 mr-1" />
-                        View Details
+                        <Eye className="h-4 w-4 mr-1" />
                       </Button>
                       {post.status === "PENDING" && (
                         <>
@@ -461,7 +459,7 @@ const AdminDashboard = () => {
                           <XCircle className="h-4 w-4 mr-1" />
                           {updatingPostIds.has(post.id)
                             ? "Processing..."
-                            : "Revoke"}
+                            : ""}
                         </Button>
                       )}
                       {post.status === "REJECTED" && (
@@ -590,6 +588,18 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Content */}
+                {selectedPost.paragraph && (
+                  <div>
+                    <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                      Content
+                    </h4>
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                        {selectedPost.paragraph}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </>
           )}
