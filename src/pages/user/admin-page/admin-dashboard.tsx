@@ -10,12 +10,43 @@ import {
   Search,
   Eye,
   Calendar,
-  User,
   Filter,
+  User,
 } from "lucide-react";
 import type { Post } from "@/types/post.type";
-import { getPosts } from "@/api/api";
+import type { User as userpost } from "@/types/user.type";
+import { getPosts, getUserById } from "@/api/api";
 import { useAdminOperations } from "@/hooks/use-admin-operations";
+
+// Component to fetch and display username
+const UserName = ({ userId }: { userId: string }) => {
+  const [user, setUser] = useState<userpost | null>(null);
+  console.log(user?.id);
+  const [username, setUsername] = useState<string>(
+    userId ? "Loading..." : "Unknown",
+  );
+
+  useEffect(() => {
+    if (!userId) {
+      return;
+    }
+
+    const fetchUser = async () => {
+      try {
+        const fetchedUser = await getUserById(userId);
+        setUser(fetchedUser);
+        setUsername(fetchedUser.username);
+      } catch (error) {
+        console.error(`Error fetching user ${userId}:`, error);
+        setUsername("Unknown");
+      }
+    };
+
+    fetchUser();
+  }, [userId]);
+
+  return <span>{username}</span>;
+};
 
 const AdminDashboard = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -322,15 +353,18 @@ const AdminDashboard = () => {
                       <div className="flex items-start justify-between mb-3">
                         <div>
                           <h3 className="text-xl font-semibold mb-2">
-                            {post.description}
+                            {post.title}
                           </h3>
                           <p className="text-muted-foreground mb-2 line-clamp-2">
-                            {post.title}
+                            {post.description}
                           </p>
                           <div className="flex items-center gap-4 text-sm text-muted-foreground">
                             <div className="flex items-center gap-1">
                               <User className="h-4 w-4" />
-                              <span>ID: {post.userId}</span>
+                              <span>
+                                User's name: <UserName userId={post.userId} />
+                              </span>
+                              <span></span>
                             </div>
                             <div className="flex items-center gap-1">
                               <Calendar className="h-4 w-4" />

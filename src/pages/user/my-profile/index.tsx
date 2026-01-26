@@ -2,7 +2,7 @@ import { useAuth } from "@/context/auth-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { User, Calendar, Shield } from "lucide-react";
+import { User } from "lucide-react";
 
 const MyProfile = () => {
   const { user } = useAuth();

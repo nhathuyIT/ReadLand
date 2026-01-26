@@ -66,6 +66,11 @@ export async function getPostsByStatus(
   return data;
 }
 
+export async function getUserById(userId: string): Promise<User> {
+  const { data } = await api.get<User>(`/user/${userId}`);
+  return data;
+}
+
 export const signup = async (payload: SignupPayload): Promise<User> => {
   const { data: user } = await api.post<User>("/user", payload);
   return user;
