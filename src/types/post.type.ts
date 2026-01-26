@@ -11,6 +11,10 @@ export interface Post {
   paragraph: string;
   createdAt: string;
   updatedAt: string;
+  author?: {
+    username: string;
+    avatarUrl?: string;
+  };
 }
 
 export interface CreatePostInput {
