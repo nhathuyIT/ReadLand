@@ -133,6 +133,10 @@ const AdminDashboard = () => {
       }
 
       // If same status, sort by newest creation date
+      // Prioritize PENDING posts first
+      if (a.status === "PENDING" && b.status !== "PENDING") return -1;
+      if (a.status !== "PENDING" && b.status === "PENDING") return 1;
+      // If both have same priority, sort by creation date (newest first)
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
 
