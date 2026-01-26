@@ -1,6 +1,6 @@
+import { extractIdFromSlug } from "@/lib/slugify";
 import type { Post } from "@/types/post.type";
 import type { User } from "@/types/user.type";
-import { extractIdFromSlug } from "@/lib/slugify";
 import axios from "axios";
 
 const DEVMOCK_API = import.meta.env.VITE_DEVMOCK_API;
